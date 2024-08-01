@@ -72,7 +72,7 @@ router.get('/:id', async (req, res, next) => {
         //Retrieve database connection
         const db = await connectToDatabase();
         //Retrieve the secondChanceItems collection
-        const collection = await db.collection('secondChanceItems');
+        const collection = db.collection('secondChanceItems');
         //Find a specific item by ID
         const id = req.params.id;
         const secondChanceItem = await collection.findOne({id: id});
@@ -93,7 +93,7 @@ router.put('/:id', async(req, res,next) => {
         //Retrieve the database connection
         const db = await connectToDatabase();
         //Retrieve the secondChanceItems collection
-        const collection = await db.collection('secondChanceItems');
+        const collection = db.collection('secondChanceItems');
         //Check if the secondChanceItem exists
         const id = req.params.id;
         const secondChanceItem = await collection.findOne({id: id});
@@ -133,7 +133,7 @@ router.delete('/:id', async(req, res,next) => {
         //Retrieve the database connection
         const db = await connectToDatabase();
         //Retrieve the secondChanceItems collection
-        const collection = await db.collection('secondChanceItems');
+        const collection = db.collection('secondChanceItems');
         //Find a specific secondChanceItem by ID
         const id = req.params.id;
         const secondChanceItem = await collection.findOne({id: id});
