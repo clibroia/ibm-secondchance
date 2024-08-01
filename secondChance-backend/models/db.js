@@ -16,16 +16,11 @@ async function connectToDatabase() {
     const client = new MongoClient(url);      
 
     // Task 1: Connect to MongoDB
-    try {
-        await client.connect();
-        console.log('Connected successfully to the server');
+    await client.connect();
+    console.log('Connected successfully to the server');
 
-        dbInstance = client.db(dbName);
-        return dbInstance;
-    }
-    catch(error) {
-        console.error(error);
-    }
+    dbInstance = client.db(dbName);
+    return dbInstance;
 }
 
 module.exports = connectToDatabase;
