@@ -21,18 +21,17 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-
 // Get all secondChanceItems
 router.get('/', async (req, res, next) => {
     logger.info('/ called');
     try {
-        //Step 2: task 1 - insert code here
-        //Step 2: task 2 - insert code here
-        //Step 2: task 3 - insert code here
-        //Step 2: task 4 - insert code here
-
+        //Connect to MongoDB
+        const db = await connectToDatabase();
+        //Retrieve the secondChanceItems collection
         const collection = db.collection("secondChanceItems");
+        //Fetch all secondChanceItems
         const secondChanceItems = await collection.find({}).toArray();
+        //Return secondChanceItems        
         res.json(secondChanceItems);
     } catch (e) {
         logger.console.error('oops something went wrong', e)
