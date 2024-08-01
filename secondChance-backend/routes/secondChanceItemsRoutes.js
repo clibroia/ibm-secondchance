@@ -21,6 +21,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+router.use(express.json());
+
 // Get all secondChanceItems
 router.get('/', async (req, res, next) => {
     logger.info('/ called');
@@ -58,7 +60,7 @@ router.post('/', upload.single('file'), async(req, res,next) => {
         secondChanceItem.date_added = date_added;
         //Add the new item to the database
         secondChanceItem = await collection.insertOne(secondChanceItem);
-        res.status(201).json(secondChanceItem.ops[0]);
+        res.status(201).send('Item added successfully');
     } catch (e) {
         next(e);
     }
@@ -72,6 +74,7 @@ router.get('/:id', async (req, res, next) => {
         //Retrieve the secondChanceItems collection
         const collection = await db.collection('secondChanceItems');
         //Find a specific item by ID
+        const id = req.params.id;
         const secondChanceItem = await collection.findOne({id: id});
         //Return the secondChanceItem as a JSON object
         if(!secondChanceItem) {
@@ -92,6 +95,7 @@ router.put('/:id', async(req, res,next) => {
         //Retrieve the secondChanceItems collection
         const collection = await db.collection('secondChanceItems');
         //Check if the secondChanceItem exists
+        const id = req.params.id;
         const secondChanceItem = await collection.findOne({id: id});
         if(!secondChanceItem) {
             logger.error('secondChanceItem not found');
@@ -131,6 +135,7 @@ router.delete('/:id', async(req, res,next) => {
         //Retrieve the secondChanceItems collection
         const collection = await db.collection('secondChanceItems');
         //Find a specific secondChanceItem by ID
+        const id = req.params.id;
         const secondChanceItem = await collection.findOne({id: id});
         if(!secondChanceItem) {
             logger.error('secondChanceItem not found');
