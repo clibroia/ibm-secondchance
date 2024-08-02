@@ -3,22 +3,22 @@ const express = require('express');
 const axios = require('axios');
 const logger = require('./logger');
 const expressPino = require('express-pino-logger')({ logger });
-// Task 1: import the natural library
-const natural = {{insert code here}}
+// Import the natural library
+const natural = require('natural'); 
 
-// Task 2: initialize the express server
-{{insert code here}}
+// Initialize the express server
+const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(expressPino);
 
 // Define the sentiment analysis route
-// Task 3: create the POST /sentiment analysis
-app.{{insert method here}}('{{insert route here}}', async (req, res) => {
+// Create the POST /sentiment analysis
+app.post('/sentiment', async (req, res) => {
 
-    // Task 4: extract the sentence parameter
-    const { sentence } = {{insert code here}};
+    // Extract the sentence parameter
+    const { sentence } = req.query;
 
 
     if (!sentence) {
@@ -37,18 +37,23 @@ app.{{insert method here}}('{{insert route here}}', async (req, res) => {
 
         let sentiment = "neutral";
 
-        // Task 5: set sentiment to negative or positive based on score rules
-        {{insert code here}}
+        // Set sentiment to negative or positive based on score rules
+        if(analysisResult < 0) {
+            sentiment = "negative";
+        }
+        if(analysisResult > .33) {
+            sentiment = "positive";
+        }
 
         // Logging the result
         logger.info(`Sentiment analysis result: ${analysisResult}`);
 
-        // Task 6: send a status code of 200 with both sentiment score and the sentiment txt in the format { sentimentScore: analysisResult, sentiment: sentiment }
-        {{insert code here}}
+        // Send a status code of 200 with both sentiment score and the sentiment txt in the format { sentimentScore: analysisResult, sentiment: sentiment }
+        res.status(200).json({sentimentScore: analysisResult, sentiment: sentiment});
     } catch (error) {
         logger.error(`Error performing sentiment analysis: ${error}`);
-        // Task 7: if there is an error, return a HTTP code of 500 and the json {'message': 'Error performing sentiment analysis'}
-        {{insert code here}}
+        // If there is an error, return a HTTP code of 500 and the json {'message': 'Error performing sentiment analysis'}
+        res.status(500).json({'message': 'Error performing sentiment analysis'});
     }
 });
 
