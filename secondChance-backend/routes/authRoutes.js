@@ -1,4 +1,5 @@
 const express = require('express');
+const {body, validationResult} = require('express-validator');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
@@ -83,6 +84,57 @@ router.post('/login', async (req, res) => {
     catch(err) {
         logger.error(err);
         return res.status(500).json({error: 'Internal server error'});
+    }
+});
+
+router.put('/update', async (req, res) => {
+    // Validate the input using `validationResult` and return an appropriate message if you detect an error
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.error('Validation errors in update request', errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+        // Check if `email` is present in the header and throw an appropriate error message if it is not present
+        const email = req.headers.email;
+
+        if (!email) {
+            logger.error('Email not found in the request headers');
+            return res.status(400).json({ error: "Email not found in the request headers" });
+        }
+        // Connect to MongoDB
+        const db = await connectToDatabase();
+        const users = db.collection('users');
+        // Find the user credentials in database
+        const toUpdateUser = await users.findOne({email: email});
+        
+        if (!toUpdateUser) {
+            logger.error('User not found');
+            return res.status(404).json({ error: "User not found" });
+        }
+        toUpdateUser.firstName = req.body.name;
+        toUpdateUser.updatedAt = new Date();
+        // Update the user credentials in the database
+        const updatedUser = await users.findOneAndUpdate(
+            { email: email },
+            { $set: toUpdateUser },
+            { returnDocument: 'after' }
+        );
+        // Create JWT authentication with `user._id` as a payload using the secret key from the .env file
+        const payload = {
+            user: {
+               id: updatedUser._id.toString()
+            }
+        };
+        
+        const authtoken = jwt.sign(payload, JWT_SECRET);
+        logger.info('User updated successfully');
+        res.json({authtoken});
+    } 
+    catch (e) {
+        logger.error(e);
+        return res.status(500).send('Internal server error');
     }
 });
 
