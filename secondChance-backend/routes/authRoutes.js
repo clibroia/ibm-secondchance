@@ -51,4 +51,39 @@ router.post('/register', async (req, res) => {
     }
 });
 
+router.post('/login', async (req, res) => {
+    try {
+        const db = await connectToDatabase();
+        const users = db.collection('users');
+        
+        const user = await users.findOne({email: req.body.email});
+        if(user) {
+            const result = await bcryptjs.compare(req.body.password, user.password);
+            if(!result) {
+                logger.error('Passwords do not match');
+                return res.status(404).json({error: 'Wrong password'});
+            }
+            const userName = user.firstName;
+            const userEmail = user.email;
+
+            let payload = {
+                user: {
+                    id: user._id.toString()
+                }
+            };
+            const authtoken = jwt.sign(payload, JWT_SECRET);
+            logger.info('User logged in successfully');
+            return res.status(200).json({authtoken: authtoken, name: userName, email: userEmail});
+        }
+        else {
+            logger.error('User not found');
+            return res.status(404).json({error: 'User not found'});
+        }
+    }
+    catch(err) {
+        logger.error(err);
+        return res.status(500).json({error: 'Internal server error'});
+    }
+});
+
 module.exports = router;
