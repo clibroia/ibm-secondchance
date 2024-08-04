@@ -98,7 +98,7 @@ router.put('/:id', async (req, res, next) => {
       logger.error('secondChanceItem not found')
       return res.status(404).json({ error: 'secondChanceItem not found' })
     }
-    //Update the item's attributes
+    // Update the item's attributes
     secondChanceItem.category = req.body.category
     secondChanceItem.condition = req.body.condition
     secondChanceItem.age_days = req.body.age_days
@@ -123,7 +123,7 @@ router.put('/:id', async (req, res, next) => {
 })
 
 // Delete an existing item
-router.delete('/:id', async(req, res, next) => {
+router.delete('/:id', async (req, res, next) => {
   try {
     // Retrieve the database connection
     const db = await connectToDatabase()
@@ -136,7 +136,7 @@ router.delete('/:id', async(req, res, next) => {
       logger.error('secondChanceItem not found')
       return res.status(404).json({ error: 'secondChanceItem not found' })
     }
-    //Delete the object and send an appropriate message
+    // Delete the object and send an appropriate message
     await collection.deleteOne({ id })
     res.json({ deleted: 'success' })
   } catch (e) {
