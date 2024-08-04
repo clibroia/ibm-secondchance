@@ -1,6 +1,5 @@
 require('dotenv').config()
 const express = require('express')
-const axios = require('axios')
 const logger = require('./logger')
 const expressPino = require('express-pino-logger')({ logger })
 // Import the natural library
@@ -39,8 +38,8 @@ app.post('/sentiment', async (req, res) => {
     if (analysisResult < 0) {
       sentiment = 'negative'
     }
-    if (analysisResult > .33) {
-      sentiment = "positive";
+    if (analysisResult > 0.33) {
+      sentiment = 'positive'
     }
 
     // Logging the result
