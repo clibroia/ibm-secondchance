@@ -45,9 +45,8 @@ router.post('/register', async (req, res) => {
     // Log the successful registration using the logger
     logger.info('User registered successfully')
     // Return the user email and the token as a JSON
-    res.json({ authtoken: authtoken, email: req.body.email })
-  }
-  catch (e) {
+    res.json({ authtoken, email: req.body.email })
+  } catch (e) {
     logger.error(e)
     return res.status(500).send('Internal server error')
   }
@@ -68,21 +67,19 @@ router.post('/login', async (req, res) => {
       const userName = user.firstName
       const userEmail = user.email
 
-      let payload = {
+      const payload = {
         user: {
           id: user._id.toString()
         }
       }
       const authtoken = jwt.sign(payload, JWT_SECRET)
       logger.info('User logged in successfully')
-      return res.status(200).json({ authtoken: authtoken, name: userName, email: userEmail })
-    }
-    else {
+      return res.status(200).json({ authtoken, name: userName, email: userEmail })
+    } else {
       logger.error('User not found')
       return res.status(404).json({ error: 'User not found' })
     }
-  }
-  catch(err) {
+  } catch (err) {
     logger.error(err)
     return res.status(500).json({ error: 'Internal server error' })
   }
@@ -108,17 +105,17 @@ router.put('/update', async (req, res) => {
     const db = await connectToDatabase()
     const users = db.collection('users')
     // Find the user credentials in database
-    const toUpdateUser = await users.findOne({ email: email })
+    const toUpdateUser = await users.findOne({ email })
 
     if (!toUpdateUser) {
-        logger.error('User not found')
-        return res.status(404).json({ error: 'User not found' })
+      logger.error('User not found')
+      return res.status(404).json({ error: 'User not found' })
     }
     toUpdateUser.firstName = req.body.name
     toUpdateUser.updatedAt = new Date()
     // Update the user credentials in the database
     const updatedUser = await users.findOneAndUpdate(
-      { email: email },
+      { email },
       { $set: toUpdateUser },
       { returnDocument: 'after' }
     )
@@ -132,8 +129,7 @@ router.put('/update', async (req, res) => {
     const authtoken = jwt.sign(payload, JWT_SECRET)
     logger.info('User updated successfully')
     res.json({ authtoken })
-  }
-  catch (e) {
+  } catch (e) {
     logger.error(e)
     return res.status(500).send('Internal server error')
   }
