@@ -7,19 +7,18 @@ const pinoLogger = require('./logger')
 
 const connectToDatabase = require('./models/db')
 const { loadData } = require('./util/import-mongo/index')
-loadData();
+loadData()
 
-const app = express();
-app.use("*",cors());
+const app = express()
+app.use('*',cors())
 
-const port = 3060;
+const port = 3060
 
 // Connect to MongoDB; we just do this one time
 connectToDatabase().then(() => {
-    pinoLogger.info('Connected to DB');
+  pinoLogger.info('Connected to DB')
 })
-    .catch((e) => console.error('Failed to connect to DB', e));
-
+  .catch((e) => console.error('Failed to connect to DB', e))
 
 app.use(express.json());
 // Serve static files from the 'public' directory
