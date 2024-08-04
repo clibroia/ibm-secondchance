@@ -1,6 +1,7 @@
 /*jshint esversion: 8 */
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const pinoLogger = require('./logger');
 
@@ -20,6 +21,8 @@ connectToDatabase().then(() => {
 
 
 app.use(express.json());
+// Serve static files from the 'public' directory
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
 
 // Route files
 const secondChanceItemsRoutes = require('./routes/secondChanceItemsRoutes');
